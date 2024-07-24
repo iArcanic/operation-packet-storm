@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  packet-analyser:
+    build: .
+    volumes:
+      - ./pcap-files:/app/data
+    command: ["/usr/src/app/target/release/app"]
+
