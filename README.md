@@ -4,6 +4,10 @@ iArcanic's submission to CoreTech Security's graduate challenge
 
 ## TL;DR / Quickstart
 
+> [!IMPORTANT]
+> You must follow the instructions in [pcap-files/README.md](https://github.com/iArcanic/operation-packet-storm/tree/main/pcap-files) before building and running the Docker container.
+> This is to ensure you have the `packet-storm.pcap` packet capture file in the `pcap-files` directory for the Docker container to use.
+
 Via Docker Compose:
 
 ```bash
