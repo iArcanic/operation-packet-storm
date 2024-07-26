@@ -4,6 +4,6 @@ services:
   packet-analyser:
     build: .
     volumes:
-      - ./pcap-files:/app/data
+      - ./pcap-files:/usr/src/app/data
     command: ["/usr/src/app/target/release/app"]
 

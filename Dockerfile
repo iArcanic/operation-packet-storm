@@ -4,14 +4,11 @@ FROM rust:latest
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy the Cargo.toml file first
-COPY src/Cargo.toml ./
+# Install libpcap-dev package
+RUN apt-get update && apt-get install -y libpcap-dev
 
-# Create a dummy src/main.rs to build dependencies and cache them
-RUN mkdir src && echo "fn main() { println!(\"Hello, world!\"); }" > src/main.rs && cargo build --release
-
-# Remove the dummy src/main.rs
-RUN rm -rf src
+# Copy Cargo.toml first
+COPY Cargo.toml ./
 
 # Copy the rest of the source code into the container
 COPY src ./src
