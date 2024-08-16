@@ -10,6 +10,7 @@ use pcap::Capture;
 use std::collections::HashMap;
 use std::net::Ipv4Addr;
 use std::str;
+use reqwest::blocking::Client;
 
 #[derive(Debug, Hash, Eq, PartialEq)]
 struct Flow {
@@ -32,6 +33,7 @@ fn main() {
     let mut other_count = 0;
     let mut packet_size_histogram = HashMap::new();
     let mut tcp_flows: HashMap<Flow, (usize, usize)> = HashMap::new(); // (packets, bytes)
+    let mut http_payloads = Vec::new(); // Store HTTP payloads
 
     // Iterate through all the packets in the file
     while let Ok(packet) = cap.next_packet() {
@@ -59,14 +61,14 @@ fn main() {
                                 entry.0 += 1;
                                 entry.1 += packet.data.len();
 
-                                // Extract and print HTTP payloads
+                                // Extract and store HTTP payloads
                                 if tcp_packet.get_source() == 80 || tcp_packet.get_destination() == 80 {
                                     if let Ok(http_payload) = str::from_utf8(tcp_packet.payload()) {
-                                        println!("HTTP Packet:\n{}", http_payload);
+                                        http_payloads.push(http_payload.to_string());
                                     }
                                 }
                             }
-                        },
+                        }
                         IpNextHeaderProtocols::Udp => udp_count += 1,
                         IpNextHeaderProtocols::Icmp => icmp_count += 1,
                         _ => other_count += 1,
@@ -83,21 +85,44 @@ fn main() {
     println!("ICMP Packets: {}", icmp_count);
     println!("Other Packets: {}", other_count);
 
-    // Collect and sort the histogram entries
-    let mut histogram_entries: Vec<(&usize, &usize)> = packet_size_histogram.iter().collect();
-    histogram_entries.sort_by(|a, b| a.0.cmp(b.0));
+    // Create plain text data
+    let mut output = String::new();
+    
+    // Summary
+    output.push_str("Summary of Packets:\n");
+    output.push_str(&format!("TCP Packets: {}\n", tcp_count));
+    output.push_str(&format!("UDP Packets: {}\n", udp_count));
+    output.push_str(&format!("ICMP Packets: {}\n", icmp_count));
+    output.push_str(&format!("Other Packets: {}\n", other_count));
 
-    println!("\nPacket Size Histogram:");
-    for (size, count) in histogram_entries {
-        println!("Size: {} bytes, Count: {}", size, count);
+    // Packet Size Histogram
+    output.push_str("\nPacket Size Histogram:\n");
+    for (size, count) in &packet_size_histogram {
+        output.push_str(&format!("Size: {} bytes, Count: {}\n", size, count));
     }
 
-    println!("\nTCP Flows:");
-    for (flow, (packet_count, byte_count)) in tcp_flows {
-        println!(
-            "{:?} -> {:?}: {} packets, {} bytes",
-            flow.src_ip, flow.dst_ip, packet_count, byte_count
-        );
+    // TCP Flows
+    output.push_str("\nTCP Flows:\n");
+    for (flow, (packets, bytes)) in &tcp_flows {
+        output.push_str(&format!(
+            "{:?} -> {:?}: {} packets, {} bytes\n",
+            flow.src_ip, flow.dst_ip, packets, bytes
+        ));
     }
+
+    // HTTP Payloads
+    output.push_str("\nHTTP Payloads:\n");
+    for payload in &http_payloads {
+        output.push_str(&format!("{}\n", payload));
+    }
+
+    // Send plain text data to the server
+    let client = Client::new();
+    let res = client.post("http://python-analyser-dashboard:5000/")
+        .header("Content-Type", "text/plain")
+        .body(output)
+        .send()
+        .expect("Failed to send data");
+
+    println!("Sent data with status: {:?}", res.status());
 }
-

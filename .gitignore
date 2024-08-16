@@ -1,2 +1,6 @@
 # Packet capture files
 pcap-files/*.pcap
+
+# Rust
+target/
+Cargo.lock

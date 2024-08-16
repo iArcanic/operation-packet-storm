@@ -18,4 +18,3 @@ RUN cargo build --release
 
 # Set the command to run the Rust application
 CMD ["./target/release/app"]
-

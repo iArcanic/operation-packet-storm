@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Packet Analyzer Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        color: #333;
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      h2 {
+        color: #555;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+        white-space: pre-wrap; /* Preserve formatting */
+        word-wrap: break-word; /* Break long words */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Packet Analyser Dashboard</h1>
+
+    <div class="section">
+      <h2>Summary of Packets</h2>
+      <pre>{{ summary }}</pre>
+    </div>
+
+    <div class="section">
+      <h2>Packet Size Histogram</h2>
+      <pre>{{ packet_size_histogram }}</pre>
+    </div>
+
+    <div class="section">
+      <h2>TCP Flows</h2>
+      <pre>{{ tcp_flows }}</pre>
+    </div>
+
+    <div class="section">
+      <h2>HTTP Payloads</h2>
+      <pre>{{ http_payloads }}</pre>
+    </div>
+  </body>
+</html>
