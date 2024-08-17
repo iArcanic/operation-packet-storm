@@ -3,51 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Packet Analyzer Dashboard</title>
+    <title>Packet Analysis Dashboard</title>
     <style>
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
       }
       h1 {
-        color: #333;
+        text-align: center;
       }
-      .section {
-        margin-bottom: 20px;
+      .content {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
       }
-      h2 {
-        color: #555;
+      .chart-container {
+        width: 45%;
+        margin: 20px 0;
+        text-align: center;
       }
-      pre {
-        background-color: #f4f4f4;
-        padding: 10px;
-        border-radius: 5px;
-        white-space: pre-wrap; /* Preserve formatting */
-        word-wrap: break-word; /* Break long words */
+      .stats {
+        text-align: center;
+        margin: 20px 0;
+      }
+      .stat-item {
+        margin: 10px 0;
       }
     </style>
   </head>
   <body>
-    <h1>Packet Analyser Dashboard</h1>
-
-    <div class="section">
-      <h2>Summary of Packets</h2>
-      <pre>{{ summary }}</pre>
+    <h1>Packet Analysis Dashboard</h1>
+    <div class="stats">
+      <div class="stat-item">
+        <strong>Average Packet Size:</strong> {{ average_packet_size }} bytes
+      </div>
+      <div class="stat-item">
+        <strong>Total Data Volume:</strong> {{ total_data_volume }} bytes
+      </div>
     </div>
-
-    <div class="section">
-      <h2>Packet Size Histogram</h2>
-      <pre>{{ packet_size_histogram }}</pre>
-    </div>
-
-    <div class="section">
-      <h2>TCP Flows</h2>
-      <pre>{{ tcp_flows }}</pre>
-    </div>
-
-    <div class="section">
-      <h2>HTTP Payloads</h2>
-      <pre>{{ http_payloads }}</pre>
+    <div class="content">
+      <div class="chart-container">
+        <h2>Transport Layer Protocol Distribution</h2>
+        <img src="data:image/png;base64,{{ pie_chart }}" alt="Pie Chart" />
+      </div>
+      <div class="chart-container">
+        <h2>Top 10 Destination IPs</h2>
+        <img src="data:image/png;base64,{{ bar_chart }}" alt="Bar Chart" />
+      </div>
     </div>
   </body>
 </html>
