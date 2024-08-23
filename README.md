@@ -82,8 +82,8 @@ docker-compose up --build
 > You can also use the regular Docker CLI commands like so:
 >
 > ```bash
-> docker build -t rust-packet-analyser .
-> docker build -t python-analyser-dashboard .
+> docker build -t rust-packet-analyser ./rust-packet-analyser
+> docker build -t python-analyser-dashboard ./python-analyser-dashboard
 > docker network create app-network
 > docker run -d --name python-analyser-dashboard --network app-network -p 5000:5000 python-analyser-dashboard
 > docker run -d --name rust-packet-analyser --network app-network rust-packet-analyser
