@@ -2,26 +2,6 @@
 
 iArcanic's submission to CoreTech Security's graduate challenge
 
-## TL;DR / Quickstart
-
-> [!IMPORTANT]
->
-> - You must follow the instructions in [pcap-files/README.md](https://github.com/iArcanic/operation-packet-storm/tree/main/pcap-files) before building and running the Docker container.
-> - This is to ensure you have the `packet-storm.pcap` packet capture file in the `pcap-files` directory for the Docker container to use.
-
-Via Docker Compose:
-
-```bash
-docker-compose up --build
-```
-
-Via Docker CLI:
-
-```bash
-docker build -t packet-analyser .
-docker run packet-analyser
-```
-
 ## Brief
 
 A critical situation has emerged, and we're calling on the brightest technical minds to assist. We’ve intercepted a massive data dump - 1,000,000 packets of potentially hostile network traffic. Time is of the essence, and we need your expertise to rapidly process and analyse this data before it's too late.
@@ -65,6 +45,12 @@ Ensure that Docker Compose is installed on your system with **version 1.28.0** o
 
 You can download and install Docker Compose from the [official Docker website](https://docs.docker.com/compose/install/).
 
+### Port availability
+
+The [`python-analyser-dashboard`](https://github.com/iArcanic/operation-packet-storm/tree/main/python-analyser-dashboard) Docker container requires port **`5000`** to run the Flask server (default for Flask).
+
+Ensure that this port is free and isn't running any conflicting services or have firewall rules concerning them.
+
 ## Usage
 
 1. Clone the repository to your local machine
@@ -73,13 +59,20 @@ You can download and install Docker Compose from the [official Docker website](h
 git clone https://github.com/iArcanic/operation-packet-storm
 ```
 
-2. Navigate to the project's root directory
+2. Download the packet capture file and place in the [pcap-files](https://github.com/iArcanic/operation-packet-storm/tree/main/pcap-files) directory
+
+> [!IMPORTANT]
+>
+> - You must follow the instructions in [pcap-files/README.md](https://github.com/iArcanic/operation-packet-storm/tree/main/pcap-files) before building and running the Docker container.
+> - This is to ensure you have the `packet-storm.pcap` packet capture file in the `pcap-files` directory for the Docker container to use.
+
+3. Navigate to the project's root directory
 
 ```bash
 cd operation-packet-storm
 ```
 
-3. Build and run the Docker container
+4. Build and run the Docker containers
 
 ```bash
 docker-compose up --build
@@ -89,10 +82,27 @@ docker-compose up --build
 > You can also use the regular Docker CLI commands like so:
 >
 > ```bash
-> docker build -t packet-analyser .
-> docker run packet-analyser
+> docker build -t rust-packet-analyser .
+> docker build -t python-analyser-dashboard .
+> docker network create app-network
+> docker run -d --name python-analyser-dashboard --network app-network -p 5000:5000 python-analyser-dashboard
+> docker run -d --name rust-packet-analyser --network app-network rust-packet-analyser
 > ```
 
-4. View the Docker container's logs for the results
+5. View the Python Analyser Dashboard
 
-## Acknowledgments
+```bash
+http://localhost:5000
+```
+
+OR
+
+```bash
+http://127.0.0.1:5000
+```
+
+OR
+
+```bash
+http://python-analyser-dashboard:5000
+```
